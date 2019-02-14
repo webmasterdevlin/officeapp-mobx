@@ -4,14 +4,15 @@ import NavBar from "./navBar";
 import { inject, observer } from "mobx-react";
 import { FormProps } from "./common/form";
 import { DepartmentModel } from "../models/department.model";
-
-import departmentStore from "../stores/department.store";
 import { History } from "history";
 import { routeCanActivate } from "../services/auth.service";
+
+import departmentStore from "../stores/department.store";
 import userStore from "../stores/user.store";
 
 export interface Props {
   departmentStore: typeof departmentStore;
+  userStore: typeof userStore;
   history: History;
 }
 
@@ -60,7 +61,7 @@ class NewDepartment extends Form<Props & FormProps, State> {
   render() {
     return (
       <>
-        <NavBar name="Devlin" />
+        <NavBar name={userStore.user.username} />
         <h2 className="text-center m-4">Add New Department</h2>
         <div className="container py-5">
           <form className="form-row" onSubmit={this.handleSubmit}>

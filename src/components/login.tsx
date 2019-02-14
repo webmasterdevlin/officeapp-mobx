@@ -6,7 +6,6 @@ import { inject, observer } from "mobx-react";
 import { History } from "history";
 import { LoginModel } from "../models/login.model";
 import userStore from "../stores/user.store";
-import { login } from "../services/auth.service";
 
 export interface Props {
   userStore: typeof userStore;
@@ -40,8 +39,7 @@ class Login extends Form<Props & FormProps, State> {
 
   _sendLogin = async () => {
     try {
-      // await userStore.login(this.state.data as LoginModel);
-      await login(this.state.data as LoginModel);
+      await userStore.login(this.state.data as LoginModel);
       window.location.href = "/";
     } catch (e) {
       alert(`Something happened: ${e.message}`);

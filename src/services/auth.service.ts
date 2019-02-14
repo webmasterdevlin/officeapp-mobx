@@ -6,9 +6,8 @@ import { RegisterModel } from "../models/register.model";
 export async function login(user: LoginModel) {
   const { data: jwt } = await postLogin(user);
   localStorage.setItem("token", jwt.token);
-  alert(`${jwt.token}`);
-  // const decoded: any = jwtDecode(jwt.token);
-  // return decoded.sub;
+  const decoded: any = jwtDecode(jwt.token);
+  return decoded.sub;
 }
 
 export async function register(registerModel: RegisterModel): Promise<any> {

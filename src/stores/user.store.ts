@@ -3,6 +3,7 @@ import { decorate, action, observable } from "mobx";
 import { RegisterModel } from "../models/register.model";
 import auth from "../services/auth.service";
 import { UserModel } from "../models/user.model";
+import { getUser } from "../services/user.service";
 
 class UserStore {
   user: UserModel = {
@@ -22,6 +23,11 @@ class UserStore {
 
   register = async (registerModel: RegisterModel) => {
     await auth.register(registerModel);
+  };
+
+  retrieveUser = async (id: string) => {
+    const { data } = await getUser(id);
+    this.user = data;
   };
 }
 

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { NavLink, Link } from "react-router-dom";
 import { History } from "history";
+import jwtDecode from "jwt-decode";
 import departmentStore from "../stores/department.store";
 import userStore from "../stores/user.store";
 import { inject, observer } from "mobx-react";
@@ -22,6 +23,7 @@ class Home extends React.Component<Props> {
     if (!routeCanActivate()) this.props.history.replace("/");
 
     this._loadDepartments();
+    this._loadUser();
   }
 
   _loadDepartments = async () => {
@@ -32,11 +34,18 @@ class Home extends React.Component<Props> {
     }
   };
 
+  _loadUser = async () => {
+    const token: any = localStorage.getItem("token");
+    const decoded: any = jwtDecode(token);
+    console.log(decoded.sub);
+    userStore.retrieveUser(decoded.sub);
+  };
+
   public render() {
     const { departments } = departmentStore;
     return (
       <>
-        <NavBar name="Devlin" />
+        <NavBar name={userStore.user.username} />
         <table className="table table-dark">
           <thead>
             <tr className="header">

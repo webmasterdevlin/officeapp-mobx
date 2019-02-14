@@ -6,12 +6,14 @@ import NavBar from "./navBar";
 import Spinner from "./spinner";
 import { inject, observer } from "mobx-react";
 import { FormProps } from "./common/form";
-import departmentStore from "../stores/department.store";
 import { routeCanActivate } from "../services/auth.service";
+
+import departmentStore from "../stores/department.store";
 import userStore from "../stores/user.store";
 
 export interface Props {
   departmentStore: typeof departmentStore;
+  userStore: typeof userStore;
   history: History;
   match: any;
 }
@@ -85,7 +87,7 @@ class EditDepartment extends Form<Props & FormProps, State> {
   render() {
     return (
       <>
-        <NavBar name="Devlin" />
+        <NavBar name={userStore.user.username} />
         <h2 className="text-center m-4">Edit Details</h2>
         {this.state.data["name"] ? (
           <div className="container py-5">
