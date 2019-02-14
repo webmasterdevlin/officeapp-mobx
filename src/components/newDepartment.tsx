@@ -54,14 +54,18 @@ class NewDepartment extends Form<Props & FormProps, State> {
   };
 
   _saveDepartment = async () => {
-    await departmentStore.addDepartment(this.state.data as DepartmentModel);
-    this.props.history.replace("/");
+    try {
+      await departmentStore.addDepartment(this.state.data as DepartmentModel);
+      this.props.history.replace("/");
+    } catch (e) {
+      alert(`Something happened: ${e.message}`);
+    }
   };
 
   render() {
     return (
       <>
-        <NavBar name={userStore.user.username} />
+        <NavBar name={userStore.userModel.username} />
         <h2 className="text-center m-4">Add New Department</h2>
         <div className="container py-5">
           <form className="form-row" onSubmit={this.handleSubmit}>

@@ -41,7 +41,6 @@ class EditDepartment extends Form<Props & FormProps, State> {
 
   async componentDidMount() {
     if (!routeCanActivate()) this.props.history.replace("/");
-
     this._loadDepartment();
   }
 
@@ -60,8 +59,12 @@ class EditDepartment extends Form<Props & FormProps, State> {
   };
 
   _loadDepartment = async () => {
-    await departmentStore.loadDepartment(this.props.match.params.id);
-    this.setState({ data: departmentStore.department });
+    try {
+      await departmentStore.loadDepartment(this.props.match.params.id);
+      this.setState({ data: departmentStore.department });
+    } catch (e) {
+      alert(`Something happened: ${e.message}`);
+    }
   };
 
   _onChange = (currentTarget: any) => {
@@ -75,19 +78,27 @@ class EditDepartment extends Form<Props & FormProps, State> {
   };
 
   _onUpdate = async () => {
-    await departmentStore.updateDepartment(this.state.data);
-    this.props.history.goBack();
+    try {
+      await departmentStore.updateDepartment(this.state.data);
+      this.props.history.goBack();
+    } catch (e) {
+      alert(`Something happened: ${e.message}`);
+    }
   };
 
   _onDelete = async () => {
-    await departmentStore.removeDepartment(this.state.data.id);
-    this.props.history.goBack();
+    try {
+      await departmentStore.removeDepartment(this.state.data.id);
+      this.props.history.goBack();
+    } catch (e) {
+      alert(`Something happened: ${e.message}`);
+    }
   };
 
   render() {
     return (
       <>
-        <NavBar name={userStore.user.username} />
+        <NavBar name={userStore.userModel.username} />
         <h2 className="text-center m-4">Edit Details</h2>
         {this.state.data["name"] ? (
           <div className="container py-5">

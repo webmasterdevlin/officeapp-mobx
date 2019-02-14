@@ -1,11 +1,12 @@
 import * as React from "react";
-import { postRegister } from "../services/user.service";
 import { inject, observer } from "mobx-react";
-import departmentStore from "../stores/department.store";
 import { RegisterModel } from "../models/register.model";
 
-export interface SignupProps {
-  departmentStore: typeof departmentStore;
+import departmentStore from "../stores/department.store";
+import userStore from "../stores/user.store";
+import Form, { FormProps } from "./common/form";
+
+export interface Props {
   renderInput: any;
   history: any;
 }
@@ -18,7 +19,7 @@ export interface State {
   };
 }
 
-class Signup extends React.Component<SignupProps, State> {
+class Signup extends Form<Props & FormProps, State> {
   state = {
     data: {
       username: "",
@@ -27,18 +28,21 @@ class Signup extends React.Component<SignupProps, State> {
     } as RegisterModel
   };
 
-  renderInput: any = {};
-  renderButton: any = {};
+  renderButton: any = () => {};
 
-  onSubmit = (e: React.SyntheticEvent) => {
+  handleOnSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
 
     this._sendRegistration();
   };
 
-  _sendRegistration = () => {
-    postRegister(this.state.data);
-    window.location.href = "/login";
+  _sendRegistration = async () => {
+    try {
+      await userStore.register(this.state.data);
+      window.location.href = "/login";
+    } catch (e) {
+      alert(`Something happened: ${e.message}`);
+    }
   };
 
   handleOnChange = ({ currentTarget }: React.FormEvent<HTMLSelectElement>) => {
@@ -67,7 +71,7 @@ class Signup extends React.Component<SignupProps, State> {
                       </div>
                       <form
                         className="card-body form-group"
-                        onSubmit={this.onSubmit}
+                        onSubmit={this.handleOnSubmit}
                       >
                         {this.renderInput("username", "Username")}
                         {this.renderInput("email", "Email", "email")}
@@ -78,12 +82,12 @@ class Signup extends React.Component<SignupProps, State> {
                         )}
 
                         <div className="form-group">
-                          {this.renderButton(
+                          {Form.renderButton(
                             "Register",
                             "mr-1 btn btn-success btn-lg float-right",
                             "submit"
                           )}
-                          {this.renderButton(
+                          {Form.renderButton(
                             "Cancel",
                             "mr-1 btn btn-default btn-lg float-right",
                             "button",

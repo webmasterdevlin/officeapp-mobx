@@ -6,7 +6,7 @@ import { UserModel } from "../models/user.model";
 import { getUser } from "../services/user.service";
 
 class UserStore {
-  user: UserModel = {
+  userModel: UserModel = {
     id: "",
     username: "",
     email: ""
@@ -18,7 +18,7 @@ class UserStore {
 
   logout = () => {
     auth.logOut();
-    this.user.id = "";
+    this.userModel.id = "";
   };
 
   register = async (registerModel: RegisterModel) => {
@@ -27,14 +27,15 @@ class UserStore {
 
   retrieveUser = async (id: string) => {
     const { data } = await getUser(id);
-    this.user = data;
+    this.userModel = data;
   };
 }
 
 decorate(UserStore, {
   login: action,
   register: action,
-  user: observable
+  retrieveUser: action,
+  userModel: observable
 });
 
 const userStore = new UserStore();

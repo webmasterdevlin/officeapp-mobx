@@ -6,11 +6,11 @@ export interface Props {
   name: string;
 }
 
-const NavBar: React.SFC<Props> = ({ name }: any) => {
+const NavBar: React.FunctionComponent<Props> = ({ name }: any) => {
   return (
     <nav className="navbar navbar-dark bg-dark">
       <Link className="navbar-brand" to="/">
-        Office App
+        OfficeApp React-Mobx
       </Link>
       <form className="form-inline">
         <span style={{ color: "lightblue", fontWeight: "bold" }}>

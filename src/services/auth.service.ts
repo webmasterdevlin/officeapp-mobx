@@ -3,11 +3,9 @@ import jwtDecode from "jwt-decode";
 import { LoginModel } from "../models/login.model";
 import { RegisterModel } from "../models/register.model";
 
-export async function login(user: LoginModel) {
+export async function login(user: LoginModel): Promise<void> {
   const { data: jwt } = await postLogin(user);
   localStorage.setItem("token", jwt.token);
-  const decoded: any = jwtDecode(jwt.token);
-  return decoded.sub;
 }
 
 export async function register(registerModel: RegisterModel): Promise<any> {

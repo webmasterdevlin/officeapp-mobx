@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
-import Form from "./common/form";
-import { FormProps } from "./common/form";
+import Form, { FormProps } from "./common/form";
 import { inject, observer } from "mobx-react";
 import { History } from "history";
 import { LoginModel } from "../models/login.model";
@@ -39,7 +38,7 @@ class Login extends Form<Props & FormProps, State> {
 
   _sendLogin = async () => {
     try {
-      await userStore.login(this.state.data as LoginModel);
+      await userStore.login(this.state.data);
       window.location.href = "/";
     } catch (e) {
       alert(`Something happened: ${e.message}`);
@@ -64,7 +63,7 @@ class Login extends Form<Props & FormProps, State> {
 
   render() {
     return (
-      <React.Fragment>
+      <>
         <div className="login-signup-bg">
           <div className="container py-5">
             <div className="row">
@@ -126,7 +125,7 @@ class Login extends Form<Props & FormProps, State> {
             </div>
           </div>
         </div>
-      </React.Fragment>
+      </>
     );
   }
 }

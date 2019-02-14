@@ -21,7 +21,6 @@ export interface Props {
 class Home extends React.Component<Props> {
   async componentDidMount() {
     if (!routeCanActivate()) this.props.history.replace("/");
-
     this._loadDepartments();
     this._loadUser();
   }
@@ -37,15 +36,19 @@ class Home extends React.Component<Props> {
   _loadUser = async () => {
     const token: any = localStorage.getItem("token");
     const decoded: any = jwtDecode(token);
-    console.log(decoded.sub);
-    userStore.retrieveUser(decoded.sub);
+
+    try {
+      await userStore.retrieveUser(decoded.sub);
+    } catch (e) {
+      alert(`Something happened: ${e.message}`);
+    }
   };
 
   public render() {
     const { departments } = departmentStore;
     return (
       <>
-        <NavBar name={userStore.user.username} />
+        <NavBar name={userStore.userModel.username} />
         <table className="table table-dark">
           <thead>
             <tr className="header">
