@@ -1,6 +1,6 @@
 import axios from "axios";
 
-function setJwt(jwt: string) {
+function setJwt(jwt: string): void {
   axios.defaults.headers.common["x-auth-token"] = jwt;
 }
 

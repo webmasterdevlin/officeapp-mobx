@@ -1,4 +1,4 @@
-import { Endpoints } from "../helpers/constants";
+import { BaseUrl } from "../helpers/constants";
 import http from "./http.service";
 import { getJwt } from "./auth.service";
 import { DepartmentModel } from "../models/department.model";
@@ -10,35 +10,32 @@ import {
 
 http.setJwt(getJwt());
 
-export async function getDepartments() {
-  return await http.get(Endpoints.departmentUrl, authBearerHeaders);
+export async function getDepartments(): Promise<any> {
+  return await http.get(BaseUrl.department, authBearerHeaders);
 }
 
-export async function postDepartment(department: DepartmentModel) {
-  console.log("Dept Service:", department);
+export async function getDepartment(id: string): Promise<any> {
+  return await http.get(`${BaseUrl.department}${id}`, authBearerHeaders);
+}
 
+export async function postDepartment(
+  department: DepartmentModel
+): Promise<any> {
   return await http.post(
-    Endpoints.departmentUrl,
+    BaseUrl.department,
     JSON.stringify(department),
     authBearerAndContentTypeJsonHeaders
   );
 }
 
-export async function getDepartment(id: string) {
-  return await http.get(`${Endpoints.departmentUrl}${id}`, authBearerHeaders);
-}
-
-export async function putDepartment(department: DepartmentModel) {
+export async function putDepartment(department: DepartmentModel): Promise<any> {
   return await http.put(
-    `${Endpoints.departmentUrl}${department.id}`,
+    `${BaseUrl.department}${department.id}`,
     department,
     authBearerAndContentTypeJsonHeaders
   );
 }
 
-export async function deleteDepartment(id: string) {
-  return await http.delete(
-    `${Endpoints.departmentUrl}${id}`,
-    authBearerHeaders
-  );
+export async function deleteDepartment(id: string): Promise<any> {
+  return await http.delete(`${BaseUrl.department}${id}`, authBearerHeaders);
 }

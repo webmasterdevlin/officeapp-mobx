@@ -1,25 +1,30 @@
 import * as React from "react";
 import Form from "./common/form";
-import * as departmentService from "../services/department.service";
 import NavBar from "./navBar";
 import { inject, observer } from "mobx-react";
-import { FormProps } from "./../components/common/form";
+import { FormProps } from "./common/form";
 import { DepartmentModel } from "../models/department.model";
 
 import departmentStore from "../stores/department.store";
 import { History } from "history";
+import { routeCanActivate } from "../services/auth.service";
+import userStore from "../stores/user.store";
 
-export interface NewDepartmentProps {
+export interface Props {
   departmentStore: typeof departmentStore;
   history: History;
 }
 
-class NewDepartment extends Form<NewDepartmentProps & FormProps, any> {
-  nameRef = React.createRef();
-  descriptionRef = React.createRef();
-  headRef = React.createRef();
-  codeRef = React.createRef();
+export interface State {
+  data: {
+    name: string;
+    description: string;
+    head: string;
+    code: string;
+  };
+}
 
+class NewDepartment extends Form<Props & FormProps, State> {
   state = {
     data: {
       name: "",
@@ -29,25 +34,33 @@ class NewDepartment extends Form<NewDepartmentProps & FormProps, any> {
     }
   };
 
+  handleOnChange = ({
+    currentTarget: input
+  }: React.FormEvent<HTMLSelectElement>) => {
+    this._formToDepartmentModel(input);
+  };
+
   handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
+    if (!routeCanActivate()) this.props.history.replace("/");
+    this._saveDepartment();
+  };
+
+  _formToDepartmentModel = (input: any) => {
+    const department: any = { ...this.state.data };
+    department[input.name] = input.value;
+    this.setState({ data: department });
+  };
+
+  _saveDepartment = async () => {
     await departmentStore.addDepartment(this.state.data as DepartmentModel);
     this.props.history.replace("/");
   };
 
-  handleChange = ({
-    currentTarget: input
-  }: React.FormEvent<HTMLSelectElement>) => {
-    const department: any = { ...this.state.data };
-    department[input.name] = input.value;
-    console.log(this.props);
-    this.setState({ data: department });
-  };
-
   render() {
     return (
-      <React.Fragment>
-        <NavBar />
+      <>
+        <NavBar name="Devlin" />
         <h2 className="text-center m-4">Add New Department</h2>
         <div className="container py-5">
           <form className="form-row" onSubmit={this.handleSubmit}>
@@ -63,15 +76,15 @@ class NewDepartment extends Form<NewDepartmentProps & FormProps, any> {
             <div className="form-group col-md-6">
               {this.renderInput("code", "Code")}
             </div>
-            {this.renderButton(
+            {Form.renderButton(
               "Save",
               "btn btn-success btn-lg btn-block my-4",
               "submit"
             )}
           </form>
         </div>
-      </React.Fragment>
+      </>
     );
   }
 }
-export default inject("departmentStore")(observer(NewDepartment));
+export default inject("departmentStore", "userStore")(observer(NewDepartment));

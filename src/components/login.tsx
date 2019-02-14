@@ -1,43 +1,61 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 import Form from "./common/form";
-import { FormProps } from "./../components/common/form";
-import auth from "../services/auth.service";
+import { FormProps } from "./common/form";
 import { inject, observer } from "mobx-react";
-import departmentStore from "../stores/department.store";
 import { History } from "history";
 import { LoginModel } from "../models/login.model";
-import { UserModel } from "../models/user.model";
+import userStore from "../stores/user.store";
+import { login } from "../services/auth.service";
 
-export interface LoginProps {
-  departmentStore: typeof departmentStore;
+export interface Props {
+  userStore: typeof userStore;
   history: History;
 }
 
-class Login extends Form<LoginProps & FormProps, any> {
+export interface State {
+  data: LoginModel;
+}
+
+class Login extends Form<Props & FormProps, State> {
   state = {
     data: {
       email: "",
       password: ""
+    } as LoginModel
+  };
+
+  handleOnSubmit = async (event: React.SyntheticEvent) => {
+    event.preventDefault();
+    this._sendLogin();
+  };
+
+  handleOnChange = ({ currentTarget }: React.FormEvent<HTMLInputElement>) => {
+    this._formToLoginModel(currentTarget);
+  };
+
+  handleReset = () => {
+    this._reset();
+  };
+
+  _sendLogin = async () => {
+    try {
+      // await userStore.login(this.state.data as LoginModel);
+      await login(this.state.data as LoginModel);
+      window.location.href = "/";
+    } catch (e) {
+      alert(`Something happened: ${e.message}`);
     }
   };
 
-  onSubmit = async (event: React.SyntheticEvent) => {
-    event.preventDefault();
-    console.log("LOGIN");
-    await auth.login(this.state.data as LoginModel);
-    window.location.href = "/";
-  };
-
-  handleChange = ({ currentTarget }: any) => {
+  _formToLoginModel = (currentTarget: any) => {
     const login: any = { ...this.state.data };
     const { name, value } = currentTarget;
     login[name] = value;
-
     this.setState({ data: login });
   };
 
-  reset = () => {
+  _reset = () => {
     const response = prompt("Enter your email here");
     if (response) {
       alert("Please check your email");
@@ -60,7 +78,7 @@ class Login extends Form<LoginProps & FormProps, any> {
                         <h3 className="mb-0 my-2">Login Page</h3>
                       </div>
                       <form
-                        onSubmit={this.onSubmit}
+                        onSubmit={this.handleOnSubmit}
                         className="card-body form-group"
                       >
                         <div className="form-group">
@@ -70,7 +88,7 @@ class Login extends Form<LoginProps & FormProps, any> {
                           {this.renderInput("password", "Password", "password")}
                         </div>
                         <div className="form-group">
-                          {this.renderButton(
+                          {Form.renderButton(
                             "Login",
                             "mr-1 btn btn-success btn-lg float-right",
                             "password"
@@ -89,7 +107,7 @@ class Login extends Form<LoginProps & FormProps, any> {
               <button
                 className="link-button"
                 type="button"
-                onClick={this.reset}
+                onClick={this.handleReset}
               >
                 Reset
               </button>
@@ -114,4 +132,4 @@ class Login extends Form<LoginProps & FormProps, any> {
     );
   }
 }
-export default inject("departmentStore")(observer(Login));
+export default inject("userStore")(observer(Login));

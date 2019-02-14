@@ -1,7 +1,8 @@
 import * as React from "react";
-import { signup } from "../services/user.service";
+import { postRegister } from "../services/user.service";
 import { inject, observer } from "mobx-react";
 import departmentStore from "../stores/department.store";
+import { RegisterModel } from "../models/register.model";
 
 export interface SignupProps {
   departmentStore: typeof departmentStore;
@@ -9,28 +10,51 @@ export interface SignupProps {
   history: any;
 }
 
-class Signup extends React.Component<SignupProps, any> {
+export interface State {
+  data: {
+    username: string;
+    email: string;
+    password: string;
+  };
+}
+
+class Signup extends React.Component<SignupProps, State> {
+  state = {
+    data: {
+      username: "",
+      email: "",
+      password: ""
+    } as RegisterModel
+  };
+
   renderInput: any = {};
   renderButton: any = {};
 
   onSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
 
-    signup(this.state.data);
+    this._sendRegistration();
+  };
+
+  _sendRegistration = () => {
+    postRegister(this.state.data);
     window.location.href = "/login";
   };
 
-  handleChange = ({ currentTarget }: React.FormEvent<HTMLSelectElement>) => {
+  handleOnChange = ({ currentTarget }: React.FormEvent<HTMLSelectElement>) => {
+    this._formToRegisterModel(currentTarget);
+  };
+
+  _formToRegisterModel = (currentTarget: any) => {
     const user = { ...this.state.data };
     const { name, value } = currentTarget;
     user[name] = value;
-    console.log("SETTING STATE:", user);
-    // this.setState({ data: user });
+    this.setState({ data: user });
   };
 
   public render() {
     return (
-      <React.Fragment>
+      <>
         <div className="login-signup-bg">
           <div className="container py-5">
             <div className="row">
@@ -78,8 +102,8 @@ class Signup extends React.Component<SignupProps, any> {
             <span>{JSON.stringify(this.state.data)}</span>
           </div>
         </div>
-      </React.Fragment>
+      </>
     );
   }
 }
-export default inject("departmentStore")(observer(Signup));
+export default inject("departmentStore", "userStore")(observer(Signup));

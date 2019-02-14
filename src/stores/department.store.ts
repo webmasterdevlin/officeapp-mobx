@@ -1,5 +1,5 @@
 import { DepartmentModel } from "../models/department.model";
-import { decorate, observable, action, computed } from "mobx";
+import { decorate, observable, action } from "mobx";
 import {
   getDepartments,
   getDepartment,
@@ -10,16 +10,21 @@ import {
 
 class DepartmentStore {
   departments: DepartmentModel[] = [];
-  department: any = {};
+  department: DepartmentModel = {
+    id: "",
+    name: "",
+    description: "",
+    head: "",
+    code: ""
+  };
 
   loadDepartments = async () => {
     const { data } = await getDepartments();
     this.departments = data;
   };
 
-  findDepartment = async (id: string) => {
+  loadDepartment = async (id: string) => {
     const { data } = await getDepartment(id);
-
     this.department = data;
   };
 
@@ -30,7 +35,6 @@ class DepartmentStore {
 
   removeDepartment = async (id: string) => {
     await deleteDepartment(id); // sending delete request to the server
-
     // no need to update UI since we're navigating to back the homepage
   };
 

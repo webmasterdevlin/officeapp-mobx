@@ -1,30 +1,42 @@
-import React from "react";
+import * as React from "react";
 import { NavLink, Link } from "react-router-dom";
+import { History } from "history";
+import departmentStore from "../stores/department.store";
+import userStore from "../stores/user.store";
+import { inject, observer } from "mobx-react";
 
 import NavBar from "./navBar";
-import "../styles/home.scss";
-
-import departmentStore from "../stores/department.store";
-import { inject, observer } from "mobx-react";
 import Spinner from "./spinner";
 
-export interface HomeProps {
+import "../styles/home.scss";
+import { routeCanActivate } from "../services/auth.service";
+
+export interface Props {
   departmentStore: typeof departmentStore;
+  userStore: typeof userStore;
+  history: History;
 }
 
-class Home extends React.Component<HomeProps, any> {
+class Home extends React.Component<Props> {
   async componentDidMount() {
-    const { departmentStore } = this.props;
-    console.log("DEPARTMENTS:", departmentStore);
-    departmentStore.loadDepartments();
+    if (!routeCanActivate()) this.props.history.replace("/");
+
+    this._loadDepartments();
   }
+
+  _loadDepartments = async () => {
+    try {
+      await departmentStore.loadDepartments();
+    } catch (e) {
+      alert(`Something happened: ${e.message}`);
+    }
+  };
 
   public render() {
     const { departments } = departmentStore;
-
     return (
-      <React.Fragment>
-        <NavBar />
+      <>
+        <NavBar name="Devlin" />
         <table className="table table-dark">
           <thead>
             <tr className="header">
@@ -69,15 +81,11 @@ class Home extends React.Component<HomeProps, any> {
           </div>
         )}
         <div className="text-center m-5">
-          <NavLink
-            type="button"
-            className="btn btn-primary btn-lg"
-            to="/new-department"
-          >
-            Create New
+          <NavLink to="/new-department">
+            <button className="btn btn-primary btn-lg">Create New</button>
           </NavLink>
         </div>
-      </React.Fragment>
+      </>
     );
   }
 }

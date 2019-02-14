@@ -1,20 +1,22 @@
 import * as React from "react";
+import { History } from "history";
+
 import Form from "./common/form";
-import * as departmentService from "../services/department.service";
 import NavBar from "./navBar";
 import Spinner from "./spinner";
 import { inject, observer } from "mobx-react";
-import { FormProps } from "./../components/common/form";
+import { FormProps } from "./common/form";
 import departmentStore from "../stores/department.store";
-import { DepartmentModel } from "../models/department.model";
+import { routeCanActivate } from "../services/auth.service";
+import userStore from "../stores/user.store";
 
-export interface EditDepartmentProps {
+export interface Props {
   departmentStore: typeof departmentStore;
-  history: any;
+  history: History;
   match: any;
 }
 
-export interface DeptState {
+export interface State {
   data: {
     id: string;
     name: string;
@@ -24,7 +26,7 @@ export interface DeptState {
   };
 }
 
-class EditDepartment extends Form<EditDepartmentProps & FormProps, DeptState> {
+class EditDepartment extends Form<Props & FormProps, State> {
   state = {
     data: {
       id: "",
@@ -36,12 +38,31 @@ class EditDepartment extends Form<EditDepartmentProps & FormProps, DeptState> {
   };
 
   async componentDidMount() {
-    await departmentStore.findDepartment(this.props.match.params.id);
-    this.setState({ data: departmentStore.department });
-    console.log("IS:", departmentStore.department);
+    if (!routeCanActivate()) this.props.history.replace("/");
+
+    this._loadDepartment();
   }
 
-  handleChange = ({ currentTarget }: React.FormEvent<HTMLSelectElement>) => {
+  handleOnChange = ({ currentTarget }: React.FormEvent<HTMLSelectElement>) => {
+    this._onChange(currentTarget);
+  };
+
+  handleOnUpdate = async () => {
+    if (!routeCanActivate()) this.props.history.replace("/");
+    this._onUpdate();
+  };
+
+  handleOnDelete = async () => {
+    if (!routeCanActivate()) this.props.history.replace("/");
+    this._onDelete();
+  };
+
+  _loadDepartment = async () => {
+    await departmentStore.loadDepartment(this.props.match.params.id);
+    this.setState({ data: departmentStore.department });
+  };
+
+  _onChange = (currentTarget: any) => {
     const { name, value } = currentTarget;
     this.setState({
       data: {
@@ -51,35 +72,20 @@ class EditDepartment extends Form<EditDepartmentProps & FormProps, DeptState> {
     });
   };
 
-  onDelete = async () => {
-    // Sample of optimistic update but not actually helpful here.
-    this.props.history.replace("/");
-    try {
-      departmentStore.removeDepartment(this.state.data.id);
-    } catch (e) {
-      if (e.response && e.response.status === 404)
-        alert("This department has already been deleted.");
-
-      this.props.history.goBack();
-    }
+  _onUpdate = async () => {
+    await departmentStore.updateDepartment(this.state.data);
+    this.props.history.goBack();
   };
 
-  onUpdate = async () => {
+  _onDelete = async () => {
+    await departmentStore.removeDepartment(this.state.data.id);
     this.props.history.goBack();
-    try {
-      await departmentService.putDepartment(this.state.data);
-    } catch (e) {
-      if (e.response && e.response.status === 500)
-        alert("Something happened. Please retry.");
-
-      this.props.history.goBack();
-    }
   };
 
   render() {
     return (
-      <React.Fragment>
-        <NavBar />
+      <>
+        <NavBar name="Devlin" />
         <h2 className="text-center m-4">Edit Details</h2>
         {this.state.data["name"] ? (
           <div className="container py-5">
@@ -99,17 +105,17 @@ class EditDepartment extends Form<EditDepartmentProps & FormProps, DeptState> {
             </div>
             <div className="container">
               <div className="row">
-                {this.renderButton(
+                {Form.renderButton(
                   "Update",
                   "btn btn-warning col m-2",
                   "button",
-                  this.onUpdate
+                  this.handleOnUpdate
                 )}
-                {this.renderButton(
+                {Form.renderButton(
                   "Delete",
-                  "btn btn-danger col m-2",
+                  "btn btn-outline-danger col m-2",
                   "button",
-                  this.onDelete
+                  this.handleOnDelete
                 )}
               </div>
             </div>
@@ -123,9 +129,9 @@ class EditDepartment extends Form<EditDepartmentProps & FormProps, DeptState> {
             <Spinner />
           </div>
         )}
-      </React.Fragment>
+      </>
     );
   }
 }
 
-export default inject("departmentStore")(observer(EditDepartment));
+export default inject("departmentStore", "userStore")(observer(EditDepartment));

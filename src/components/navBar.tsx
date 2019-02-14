@@ -1,43 +1,27 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 import "../styles/navBar.scss";
-import { inject, observer } from "mobx-react";
-import departmentStore from "../stores/department.store";
 
-// export interface NavBarProps {
-//   departmentStore: typeof departmentStore;
-// }
+export interface Props {
+  name: string;
+}
 
-// class NavBar extends React.Component<NavBarProps, any> {
-//   public render() {
-//     return (
-//       <nav className="navbar navbar-dark bg-dark">
-//         <Link className="navbar-brand" to="/">
-//           Office App
-//         </Link>
-//         <form className="form-inline">
-//           <Link className="m-2 p-2 my-sm-0 links" to="/logout">
-//             Logout
-//           </Link>
-//         </form>
-//       </nav>
-//     );
-//   }
-// }
-
-function NavBar() {
+const NavBar: React.SFC<Props> = ({ name }: any) => {
   return (
     <nav className="navbar navbar-dark bg-dark">
       <Link className="navbar-brand" to="/">
         Office App
       </Link>
       <form className="form-inline">
+        <span style={{ color: "lightblue", fontWeight: "bold" }}>
+          Welcome, {name}!{" "}
+        </span>
         <Link className="m-2 p-2 my-sm-0 links" to="/logout">
-          Logout
+          <span style={{ color: "lightblue" }}>Logout</span>
         </Link>
       </form>
     </nav>
   );
-}
+};
 
 export default NavBar;

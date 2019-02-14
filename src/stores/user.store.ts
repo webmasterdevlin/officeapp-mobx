@@ -1,21 +1,34 @@
 import { LoginModel } from "../models/login.model";
+import { decorate, action, observable } from "mobx";
+import { RegisterModel } from "../models/register.model";
+import auth from "../services/auth.service";
 import { UserModel } from "../models/user.model";
-import { signin, signup } from "../services/user.service";
-import { decorate, action } from "mobx";
 
 class UserStore {
-  async signin(login: LoginModel) {
-    await signin(login);
-  }
+  user: UserModel = {
+    id: "",
+    username: "",
+    email: ""
+  };
 
-  async signout(user: UserModel) {
-    await signup(user);
-  }
+  login = async (loginModel: LoginModel) => {
+    await auth.login(loginModel);
+  };
+
+  logout = () => {
+    auth.logOut();
+    this.user.id = "";
+  };
+
+  register = async (registerModel: RegisterModel) => {
+    await auth.register(registerModel);
+  };
 }
 
 decorate(UserStore, {
-  signin: action,
-  signout: action
+  login: action,
+  register: action,
+  user: observable
 });
 
 const userStore = new UserStore();

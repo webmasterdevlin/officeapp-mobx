@@ -6,14 +6,13 @@ import EditDepartment from "./components/editDepartment";
 import Signup from "./components/signup";
 import Login from "./components/login";
 import Logout from "./components/logout";
-import ProtectedRoute from "./components/common/protectedRoute";
 import { Provider } from "mobx-react";
 import departmentStore from "./stores/department.store";
 import userStore from "./stores/user.store";
 import createBrowserHistory from "history/createBrowserHistory";
 import { RouterStore, syncHistoryWithStore } from "mobx-react-router";
+import ProtectedRoute from "./components/common/protectedRoute";
 
-import moduleName from "module";
 const browserHistory = createBrowserHistory();
 const routingStore = new RouterStore();
 const stores = {
@@ -26,13 +25,13 @@ const history = syncHistoryWithStore(browserHistory, routingStore);
 const Router = () => (
   <Provider {...stores}>
     <Switch>
-      <Route history={history} path="/home" component={Home} />
-      <Route
+      <ProtectedRoute history={history} path="/home" component={Home} />
+      <ProtectedRoute
         history={history}
         path="/new-department"
         component={NewDepartment}
       />
-      <Route
+      <ProtectedRoute
         history={history}
         path="/edit-detail/:id"
         component={EditDepartment}

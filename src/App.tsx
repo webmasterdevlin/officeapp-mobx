@@ -1,15 +1,17 @@
 import React, { Component } from "react";
 import Router from "./router";
 import { BrowserRouter } from "react-router-dom";
+import DevTools from "mobx-react-devtools";
 import "./App.scss";
 
 class App extends Component {
   render() {
     return (
       <BrowserRouter>
-        <React.Fragment>
+        <>
           <Router />
-        </React.Fragment>
+          <DevTools />
+        </>
       </BrowserRouter>
     );
   }

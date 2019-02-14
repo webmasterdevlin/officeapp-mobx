@@ -1,11 +1,6 @@
-// export const Endpoints = {
-//   loginUrl: "http://localhost:5000/login",
-//   registerUrl: "http://localhost:5000/register",
-//   departmentUrl: "http://localhost:5000/departments/"
-// };
-
-export const Endpoints = {
-  loginUrl: "http://localhost:5000/login",
-  registerUrl: "http://localhost:5000/register",
-  departmentUrl: "http://localhost:5000/departments/"
+export const BaseUrl: any = {
+  login: "http://localhost:5000/api/auth/login",
+  register: "http://localhost:5000/api/auth/register",
+  department: "http://localhost:5000/api/departments/",
+  user: "http://localhost:5000/api/users/"
 };

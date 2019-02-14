@@ -1,20 +1,20 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
-import Form from "./common/form";
 import "../styles/login.scss";
-import auth from "../services/auth.service";
 import { inject, observer } from "mobx-react";
-import { History } from "history";
+import userStore from "../stores/user.store";
 
-export interface LogoutProps {}
+export interface Props {
+  userStore: typeof userStore;
+}
 
-class Logout extends React.Component<LogoutProps, any> {
+class Logout extends React.Component<Props> {
   componentDidMount() {
-    auth.logOut();
+    const { userStore } = this.props;
+    userStore.logout();
   }
   render() {
     return null;
   }
 }
 
-export default inject("departmentStore")(observer(Logout));
+export default inject("departmentStore", "userStore")(observer(Logout));

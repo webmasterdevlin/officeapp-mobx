@@ -15,7 +15,7 @@ class Form<T extends FormProps, R extends FormState> extends React.Component<
   T,
   R
 > {
-  handleChange: Function = () => {};
+  handleOnChange: Function = () => {};
 
   public renderInput(name: string, label?: string, type: string = "text") {
     const { data } = this.state;
@@ -26,12 +26,17 @@ class Form<T extends FormProps, R extends FormState> extends React.Component<
         name={name}
         type={type}
         value={data[name]}
-        onChange={this.handleChange}
+        onChange={this.handleOnChange}
       />
     );
   }
 
-  public renderButton(label: string, style: string, type?: string, func?: any) {
+  public static renderButton(
+    label: string,
+    style: string,
+    type?: string,
+    func?: any
+  ) {
     return (
       <button type={type} className={`${style}`} onClick={func}>
         {label}

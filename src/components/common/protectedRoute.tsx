@@ -2,14 +2,18 @@ import * as React from "react";
 import { Route, Redirect } from "react-router-dom";
 import auth from "../../services/auth.service";
 
-function ProtectedRoute({ path, component: Component, render, ...rest }: any) {
+const ProtectedRoute = ({
+  path,
+  component: Component,
+  render,
+  ...rest
+}: any): React.FunctionComponentElement<string> => {
   return (
     <Route
       {...rest}
       render={props => {
         const routeCanActivate = auth.routeCanActivate();
 
-        console.log("routeCanActivate:", routeCanActivate);
         if (!routeCanActivate)
           return (
             <Redirect
@@ -23,5 +27,5 @@ function ProtectedRoute({ path, component: Component, render, ...rest }: any) {
       }}
     />
   );
-}
+};
 export default ProtectedRoute;

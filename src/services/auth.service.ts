@@ -1,47 +1,41 @@
-import { signin } from "./user.service";
+import { postLogin, postRegister } from "./user.service";
 import jwtDecode from "jwt-decode";
 import { LoginModel } from "../models/login.model";
-
-const key = "token";
+import { RegisterModel } from "../models/register.model";
 
 export async function login(user: LoginModel) {
-  console.log("AUTH SERVICE");
-  const { data: jwt } = await signin(user);
+  const { data: jwt } = await postLogin(user);
   localStorage.setItem("token", jwt.token);
+  alert(`${jwt.token}`);
+  // const decoded: any = jwtDecode(jwt.token);
+  // return decoded.sub;
 }
 
-export function logOut() {
+export async function register(registerModel: RegisterModel): Promise<any> {
+  await postRegister(registerModel);
+}
+
+export function logOut(): void {
   localStorage.removeItem("token");
   window.location.href = "/login";
-  console.log("logged out");
 }
 
 export function getJwt(): string {
-  return localStorage.getItem(key) as string;
+  return localStorage.getItem("token") as string;
 }
 
-export function RouteCanActivate() {
-  const token = localStorage.getItem(key);
+export function routeCanActivate(): boolean {
+  const token = localStorage.getItem("token");
   if (!token) return false;
-  console.log("token:", token);
   const decoded: any = jwtDecode(token);
   const expiresAt = decoded.exp * 1000;
   const dateNow = Date.now();
-  const isTokenExpired = dateNow > expiresAt;
-  console.log("dateNow:", dateNow);
-  console.log("expiresAt:", expiresAt);
-  console.log("isTokenExpired:", isTokenExpired);
-
-  if (isTokenExpired) {
-    return false;
-  }
-  if (!isTokenExpired) {
-    return true;
-  }
+  return dateNow <= expiresAt;
 }
 
 export default {
   login,
+  register,
   logOut,
-  routeCanActivate: RouteCanActivate
+  routeCanActivate
 };
