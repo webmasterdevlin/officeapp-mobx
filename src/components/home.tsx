@@ -25,6 +25,15 @@ class Home extends React.Component<Props> {
     this._loadUser();
   }
 
+  handleOnDelete = async (id: string) => {
+    if (!routeCanActivate()) this.props.history.replace("/");
+
+    const response = window.confirm("Are you sure you want to delete this?");
+    if (!response) return;
+
+    this._deleteSelectedDepartment(id);
+  };
+
   _loadDepartments = async () => {
     try {
       await departmentStore.loadDepartments();
@@ -44,6 +53,10 @@ class Home extends React.Component<Props> {
     }
   };
 
+  _deleteSelectedDepartment = async (id: string) => {
+    await departmentStore.removeDepartment(id);
+  };
+
   public render() {
     const { departments } = departmentStore;
     return (
@@ -56,30 +69,26 @@ class Home extends React.Component<Props> {
               <th scope="col">NAME</th>
               <th scope="col">DESCRIPTION</th>
               <th scope="col">HEAD</th>
+              <th scope="col" />
             </tr>
           </thead>
           <tbody>
             {departments.map(item => (
               <tr key={item.id}>
+                <td>{item.code}</td>
+                <td>{item.name}</td>
+                <td>{item.description}</td>
+                <td>{item.head}</td>
                 <td>
                   <Link className="links" to={`/edit-detail/${item.id}`}>
-                    {item.code}
+                    <button className="btn btn-info mr-1">Edit</button>
                   </Link>
-                </td>
-                <td>
-                  <Link className="links" to={`/edit-detail/${item.id}`}>
-                    {item.name}
-                  </Link>
-                </td>
-                <td>
-                  <Link className="links" to={`/edit-detail/${item.id}`}>
-                    {item.description}
-                  </Link>
-                </td>
-                <td>
-                  <Link className="links" to={`/edit-detail/${item.id}`}>
-                    {item.head}
-                  </Link>
+                  <button
+                    onClick={() => this.handleOnDelete(item.id)}
+                    className="btn btn-outline-warning ml-1"
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}

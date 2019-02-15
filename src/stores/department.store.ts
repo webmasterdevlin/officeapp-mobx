@@ -34,8 +34,17 @@ class DepartmentStore {
   };
 
   removeDepartment = async (id: string) => {
-    await deleteDepartment(id); // sending delete request to the server
-    // no need to update UI since we're navigating to back the homepage
+    let index: number = this.departments.findIndex(h => h.id === id);
+    let departmentToRemove: DepartmentModel | any = this.departments.find(
+      d => d.id === id
+    );
+    this.departments.splice(index, 1);
+    try {
+      await deleteDepartment(id); // sending delete request to the server
+    } catch (e) {
+      this.departments.splice(index, 0, departmentToRemove);
+      alert(`Something happened: ${e.message}`);
+    }
   };
 
   updateDepartment = async (department: DepartmentModel) => {
