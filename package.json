@@ -20,7 +20,7 @@
     "mobx-react": "^5.4.3",
     "mobx-react-devtools": "^6.0.3",
     "mobx-react-router": "^4.0.5",
-    "node-sass": "^4.10.0",
+    "node-sass": "^7.0.0",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
     "react-loader-spinner": "^2.2.0",
